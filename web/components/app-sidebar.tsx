@@ -11,16 +11,14 @@ import { Button } from "@/components/ui/button"
 import { Notebook, Calendar, ListCheck } from 'lucide-react';
 import { useRouter } from "next/navigation"
 import type { GetServerSidePropsContext } from 'next'
-import { createClient } from '@/utils/supabase/clients/server-props'
+import { createClient } from '@/utils/supabase/clients/component'
    
 export function AppSidebar() {
-  // const supabase = createClient(context)
+  const supabase = createClient()
   const router = useRouter()
 
-  const logOut = () => {
-    // TODO: doesn't actually sign out, need to figure out
-    // supabase.auth.signOut()
-    router.push("/login")
+  const logOut = async () => {
+    await supabase.auth.signOut().then(() => router.push("/login"))
   }
 
   const items = [
@@ -43,15 +41,15 @@ export function AppSidebar() {
 
   return (
       <Sidebar>
-        <SidebarHeader className="m-3">MealPrep Me</SidebarHeader>
+        <SidebarHeader className="m-[1rem] text-xl font-bold">MealPrep Me</SidebarHeader>
         <SidebarContent>
-          <SidebarMenu className="m-3">
+          <SidebarMenu className="w-[14rem] ml-[1rem]">
             {items.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
                   <a href={item.url}>
-                    <item.icon />
-                      <span>{item.title}</span>
+                    <item.icon className="w-6 h-6" />
+                      <span className="text-lg">{item.title}</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -61,7 +59,7 @@ export function AppSidebar() {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Button variant="destructive" className="w-full m-3" onClick={logOut}>
+              <Button variant="destructive" className="w-[12rem] m-[1.5rem] text-lg" onClick={logOut}>
                 Log Out
               </Button>
             </SidebarMenuItem>

@@ -1,10 +1,18 @@
 import type { User } from '@supabase/supabase-js'
 import type { GetServerSidePropsContext } from 'next'
 import { createClient } from '@/utils/supabase/clients/server-props'
+import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 
 export default function Recipes({ user }: { user: User }) {
     return (
-        <h1>Not yet implemented, check back after Sprint 2!</h1>
+      <SidebarProvider>
+        <AppSidebar />
+        <main>
+          <SidebarTrigger className="m-[1rem]" />
+          <h1>Not yet implemented, check back after Sprint 2!</h1>
+        </main>
+      </SidebarProvider>
     );
 }
 
