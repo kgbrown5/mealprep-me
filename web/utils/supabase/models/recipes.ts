@@ -13,7 +13,7 @@ export const recipe_ingredient = z.object({
   id: z.string(),
   recipe_id: z.string(),
   ingredient_id: z.string().nullable(),
-  quantity: z.int().nullable(),
+  quantity: z.number().nullable(),
   unit: z.string().nullable(),
 });
 
