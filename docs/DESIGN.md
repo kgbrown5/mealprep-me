@@ -6,15 +6,16 @@
 
 *Replace this with your feature plan. Write a bit more detail under each heading from before (description, user, purpose). Also, add a fourth section to each with some technical notes on how you may implement each feature and any other backend or frontend notes you may need.*
 
-### Feature 1: ___
+### Feature 1: Recipe Cards
 
-**Description:**
+Users can create new recipes and view previously saved recipes. Recipes include a title, a list of ingredients, and optional photos, descriptions, or links.
 
 **User(s):**
 
 **Purpose:**
 
 **Technical Notes:**
+this project will utilize React, Next.js, and Supabase (including the Realtime feature). We don't anticipate needing any additional technology outside of what was covered in lecture.
 
 ### Feature 2: ___
 
