@@ -1,12 +1,11 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 import type { User } from '@supabase/supabase-js'
 import type { GetServerSidePropsContext } from 'next'
 import { createClient } from '@/utils/supabase/clients/server-props'
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 
-const geistSans = Geist({
+/* const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -14,9 +13,9 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
+}); */
 
-export default function Home({ user }: { user: User }) {
+export default function Home(/* { user }: { user: User }*/) {
   return (
     <SidebarProvider>
       <AppSidebar />

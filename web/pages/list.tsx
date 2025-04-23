@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/clients/server-props'
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 
-export default function List({ user }: { user: User }) {
+export default function List(/*{ user }: { user: User }*/) {
     return (
       <SidebarProvider>
         <AppSidebar />
