@@ -5,14 +5,12 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Plus, Ellipsis } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -27,27 +25,56 @@ import { z } from "zod"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form"
 import { createComponentClient } from '@/utils/supabase/clients/component'
+import { useEffect, useState } from 'react'
 
-const formSchema = Recipe
+// const formSchema = Recipe
 
 // pagination or scroll? scroll may be easier
 
 export default function Recipes({ user }: { user: User }) {
   const supabase = createComponentClient();
-    const formSchema = Recipe
+  type RecipeData = z.infer<typeof Recipe>;
+
+  const [recipes, setRecipes] = useState<RecipeData[]>([])
+  // const [loading, setLoading] = useState(true)
+
+  const formSchema = Recipe
 
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {},
-    }
-    )
+    })
+
+    useEffect(() => {
+      let ignore = false
+  
+      const loadRecipes = async () => {
+        // setLoading(true)
+        const { data, error } = await supabase
+          .from("recipes")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+  
+        if (!ignore) {
+          if (error) console.error(error)
+          setRecipes(data ?? [])
+          // setLoading(false)
+        }
+      }
+  
+      loadRecipes()
+      return () => {
+        ignore = true
+      }
+    }, [supabase, user.id])
+
+    
 
     const saveRecipe = async (values: z.infer<typeof formSchema>) => {
       console.log("Recipe Saved!")
@@ -133,7 +160,6 @@ export default function Recipes({ user }: { user: User }) {
                         )}
                       />
                     </form>
-                  
                   </Form>
                   <DialogFooter>
                     <DialogClose asChild className='flex justify-between'>
@@ -146,15 +172,25 @@ export default function Recipes({ user }: { user: User }) {
                 </DialogContent>
               </Dialog>
             </div>
-            <Card>
-              <CardHeader className="flex justify-between">
-                <CardTitle className='mt-[.5rem]'>Placeholder Card</CardTitle>
-                <Button variant="ghost"><Ellipsis/></Button>
-              </CardHeader>
-              <CardContent>
-                <p>Replace with fetched data from supabase</p>
-              </CardContent>
-            </Card>
+            {recipes.map(recipe => (
+              <Card key={recipe.name}>
+                <CardHeader className="flex justify-between">
+                  <CardTitle className='mt-[.5rem]'>{recipe.name}</CardTitle>
+                  <Button variant="ghost"><Ellipsis/></Button>
+                </CardHeader>
+                <CardContent>
+                  <p>{recipe.description}</p>
+                  
+                  {recipe.photo && (
+                    <img
+                      src={recipe.photo}
+                      alt={recipe.name}
+                      className="rounded-md"
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </main>
       </SidebarProvider>
@@ -177,4 +213,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         user: data.user,
       },
     }
-  }
+}
