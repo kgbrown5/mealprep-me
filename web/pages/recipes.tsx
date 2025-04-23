@@ -139,13 +139,15 @@ export default function Recipes({ user }: { user: User }) {
                                 </FormItem>
                         )}
                       />
-                      <Button type="submit">Submit</Button>
                     </form>
+                  
                   </Form>
                   <DialogFooter>
                     <DialogClose asChild className='flex justify-between'>
+                      <Button form="new-recipe" type="submit">Save</Button>
+                    </DialogClose>
+                    <DialogClose asChild className='flex justify-between'>
                       <Button variant="secondary">Cancel</Button>
-                      {/* <Button onClick={saveRecipe}>Save</Button> */}
                     </DialogClose>
                   </DialogFooter>
                 </DialogContent>
