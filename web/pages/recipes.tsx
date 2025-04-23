@@ -6,7 +6,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
 import { Plus, Ellipsis } from 'lucide-react';
 import {
   Dialog,
@@ -200,7 +200,10 @@ export default function Recipes({ user }: { user: User }) {
             {recipes.map(recipe => (
               <Card key={recipe.name}>
                 <CardHeader className="flex justify-between">
-                  <CardTitle className='mt-[.5rem]'>{recipe.name}</CardTitle>
+                  <div className='mt-[.5rem]'>
+                  <CardTitle>{recipe.name}</CardTitle>
+                  <CardDescription>{recipe.description}</CardDescription>
+                  </div>
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="ghost"><Ellipsis/></Button>
@@ -228,7 +231,7 @@ export default function Recipes({ user }: { user: User }) {
                   </Dialog>
                 </CardHeader>
                 <CardContent>
-                  <p className='my-[.5rem]'>{recipe.description}</p>
+                  {/*<p className='my-[.5rem]'>{recipe.description}</p>*/}
                   
                   {recipe.photo && (
                     <img
