@@ -2,9 +2,9 @@ import { z } from "zod";
 
 export const Recipe = z.object({
   name: z.string(),
-  description: z.string(),
-  custom_text: z.string(),
-  photo: z.instanceof(File),
+  description: z.string().optional(),
+  custom_text: z.string().optional(),
+  photo: z.instanceof(File).optional(),
   ingredients: z.string(),
 });
 
