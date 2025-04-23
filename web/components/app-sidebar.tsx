@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button"
 import { Notebook, Calendar, ListCheck } from 'lucide-react';
 import { useRouter } from "next/navigation"
 import type { GetServerSidePropsContext } from 'next'
-import { createClient } from '@/utils/supabase/clients/component'
+import { createComponentClient } from '@/utils/supabase/clients/component'
    
 export function AppSidebar() {
-  const supabase = createClient()
+  const supabase = createComponentClient()
   const router = useRouter()
 
   const logOut = async () => {

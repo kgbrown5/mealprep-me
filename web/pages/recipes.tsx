@@ -19,7 +19,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { DialogClose } from '@radix-ui/react-dialog'
-import { recipe } from '@/utils/supabase/models/recipes'
+import { Recipe } from '@/utils/supabase/models/recipes'
+import { newRecipe } from '@/utils/supabase/queries/recipes'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -32,101 +33,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { createComponentClient } from '@/utils/supabase/clients/component'
 
-const formSchema = recipe
-
-export function RecipeForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {},
-  }
-  )
-
-  function saveRecipe(values: z.infer<typeof formSchema>) {
-    console.log("Recipe Saved!")
-    console.log(values)
-    // implement sending data to supabase
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(saveRecipe)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-              <Input placeholder='Recipe Name' />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-              <Input placeholder='Recipe Description' />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="photo"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Picture</FormLabel>
-              <FormControl>
-              <Input type="file" />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="ingredients"
-          render={({ field }) => (
-            <FormItem>
-              {/* Ingredients input here */}
-              <FormLabel>Ingredients</FormLabel>
-              <FormControl>
-              <Input placeholder="Ingredients..." />
-              {/* ^^ if just a text input */}
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="custom_text"
-          render={({ field }) => (
-            <FormItem>
-                    <FormLabel>Details</FormLabel>
-                    <FormControl>
-                    <Textarea placeholder='Details about your recipe...' />
-                    </FormControl>
-                  </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
-  )
-}
+const formSchema = Recipe
 
 // pagination or scroll? scroll may be easier
 
 export default function Recipes({ user }: { user: User }) {
-    const formSchema = recipe
+  const supabase = createComponentClient();
+    const formSchema = Recipe
 
-    const saveRecipe = () => {
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {},
+    }
+    )
+
+    const saveRecipe = async (values: z.infer<typeof formSchema>) => {
       console.log("Recipe Saved!")
-      // implement sending data to supabase
+      await newRecipe(supabase, user.id, values)
     }
 
     return (
@@ -143,11 +68,77 @@ export default function Recipes({ user }: { user: User }) {
                   <DialogHeader>
                     <DialogTitle>New Recipe</DialogTitle>
                   </DialogHeader>
-                  <RecipeForm />
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(saveRecipe)} className="space-y-8">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                            <Input placeholder='Recipe Name' />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                            <Input placeholder='Recipe Description' />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="photo"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Picture</FormLabel>
+                            <FormControl>
+                            <Input type="file" />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="ingredients"
+                        render={({ field }) => (
+                          <FormItem>
+                            {/* Ingredients input here */}
+                            <FormLabel>Ingredients</FormLabel>
+                            <FormControl>
+                            <Input placeholder="Ingredients..." />
+                            {/* ^^ if just a text input */}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="custom_text"
+                        render={({ field }) => (
+                          <FormItem>
+                                  <FormLabel>Details</FormLabel>
+                                  <FormControl>
+                                  <Textarea placeholder='Details about your recipe...' />
+                                  </FormControl>
+                                </FormItem>
+                        )}
+                      />
+                      <Button type="submit">Submit</Button>
+                    </form>
+                  </Form>
                   <DialogFooter>
                     <DialogClose asChild className='flex justify-between'>
                       <Button variant="secondary">Cancel</Button>
-                      <Button onClick={saveRecipe}>Save</Button>
+                      {/* <Button onClick={saveRecipe}>Save</Button> */}
                     </DialogClose>
                   </DialogFooter>
                 </DialogContent>
