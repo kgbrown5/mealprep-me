@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const Recipe = z.object({
   name: z.string(),
-  description: z.string().nullable(),
-  custom_text: z.string().nullable(),
-  photo: z.string().nullable(),
-  ingredients: z.string().nullable(),
+  description: z.string(),
+  custom_text: z.string(),
+  photo: z.string(),
+  ingredients: z.string(),
 });
 
 export const RecipeIngredient = z.object({

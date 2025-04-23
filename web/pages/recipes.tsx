@@ -77,7 +77,7 @@ export default function Recipes({ user }: { user: User }) {
                           <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                            <Input placeholder='Recipe Name' />
+                            <Input placeholder='Recipe Name' {...field} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -89,7 +89,7 @@ export default function Recipes({ user }: { user: User }) {
                           <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                            <Input placeholder='Recipe Description' />
+                              <Input placeholder='Recipe Description' {...field} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -101,7 +101,7 @@ export default function Recipes({ user }: { user: User }) {
                           <FormItem>
                             <FormLabel>Picture</FormLabel>
                             <FormControl>
-                            <Input type="file" />
+                            <Input type="file" {...field} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -114,7 +114,7 @@ export default function Recipes({ user }: { user: User }) {
                             {/* Ingredients input here */}
                             <FormLabel>Ingredients</FormLabel>
                             <FormControl>
-                            <Input placeholder="Ingredients..." />
+                            <Input placeholder="Ingredients..." {...field}/>
                             {/* ^^ if just a text input */}
                             </FormControl>
                           </FormItem>
@@ -127,7 +127,7 @@ export default function Recipes({ user }: { user: User }) {
                           <FormItem>
                                   <FormLabel>Details</FormLabel>
                                   <FormControl>
-                                  <Textarea placeholder='Details about your recipe...' />
+                                  <Textarea placeholder='Details about your recipe...' {...field}/>
                                   </FormControl>
                                 </FormItem>
                         )}
