@@ -11,7 +11,7 @@ export async function newRecipe(
   let photo = null;
 
   if (values.photo) {
-    const filePath = `user_uploads/${Date.now()}_${values.photo.name}`;
+    const filePath = `${Date.now()}_${values.photo.name}`;
 
     const { data: photoData, error: photoError } = await supabase.storage
       .from("recipe-pictures")
@@ -39,7 +39,7 @@ export async function newRecipe(
       description: values.description,
       custom_text: values.custom_text,
       ingredients: values.ingredients,
-      photo_url: photo,
+      photo: photo,
     })
     .select();
 

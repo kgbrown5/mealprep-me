@@ -34,12 +34,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { createComponentClient } from '@/utils/supabase/clients/component'
+import { useState } from 'react'
 
 const formSchema = Recipe
 
 // pagination or scroll? scroll may be easier
 
 export default function Recipes({ user }: { user: User }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const supabase = createComponentClient();
     const formSchema = Recipe
 
@@ -50,8 +52,8 @@ export default function Recipes({ user }: { user: User }) {
     )
 
     const saveRecipe = async (values: z.infer<typeof formSchema>) => {
-      console.log("Recipe Saved!")
       await newRecipe(supabase, user.id, values)
+        .then(() => setDialogOpen(false))
     }
 
     return (
@@ -62,14 +64,16 @@ export default function Recipes({ user }: { user: User }) {
           <div className='min-h-[75vh] grid grid-cols-3 grid-rows-2 gap-[2rem] mx-[3rem]'>
             <div className='col-start-1 col-end-2 row-start-1 row-end-2 flex flex-col justify-between'>
               <h1 className='text-3xl font-bold'>My Recipes</h1>
-              <Dialog>
-                <DialogTrigger className='w-full'><Plus />Add New</DialogTrigger>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild> 
+                  <Button className='w-full'><Plus />Add New</Button>
+                </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>New Recipe</DialogTitle>
                   </DialogHeader>
                   <Form {...form}>
-                    <form onSubmit={form.handleSubmit(saveRecipe)} className="space-y-8">
+                    <form id="new-recipe" onSubmit={form.handleSubmit(saveRecipe)} className="space-y-8">
                       <FormField
                         control={form.control}
                         name="name"
@@ -142,13 +146,11 @@ export default function Recipes({ user }: { user: User }) {
                     </form>
                   
                   </Form>
-                  <DialogFooter>
-                    <DialogClose asChild className='flex justify-between'>
-                      <Button form="new-recipe" type="submit">Save</Button>
-                    </DialogClose>
-                    <DialogClose asChild className='flex justify-between'>
+                  <DialogFooter className='flex justify-between'>
+                    <DialogClose asChild>
                       <Button variant="secondary">Cancel</Button>
                     </DialogClose>
+                    <Button type="submit" form="new-recipe">Save</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
