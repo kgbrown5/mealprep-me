@@ -8,7 +8,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/clients/component";
+import { createComponentClient } from "@/utils/supabase/clients/component";
 import { AtSign, BotMessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ import { useState } from "react";
 export default function SignUpPage() {
   // Create necessary hooks for clients and providers.
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = createComponentClient();
   // Create states for each field in the form.
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
