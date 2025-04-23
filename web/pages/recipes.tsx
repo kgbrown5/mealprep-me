@@ -144,7 +144,7 @@ export default function Recipes({ user }: { user: User }) {
                       <FormField
                         control={form.control}
                         name="photo"
-                        render={({ field }) => (
+                        render={() => (
                           <FormItem>
                             <FormLabel>Picture</FormLabel>
                             <FormControl>

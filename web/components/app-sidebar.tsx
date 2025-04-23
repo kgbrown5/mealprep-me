@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { Notebook, Calendar, ListCheck } from 'lucide-react';
 import { useRouter } from "next/navigation"
-import type { GetServerSidePropsContext } from 'next'
 import { createComponentClient } from '@/utils/supabase/clients/component'
    
 export function AppSidebar() {
