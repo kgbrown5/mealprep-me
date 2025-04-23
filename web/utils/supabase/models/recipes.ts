@@ -4,7 +4,7 @@ export const Recipe = z.object({
   name: z.string(),
   description: z.string(),
   custom_text: z.string(),
-  photo: z.string(),
+  photo: z.instanceof(File),
   ingredients: z.string(),
 });
 

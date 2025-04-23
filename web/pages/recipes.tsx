@@ -101,7 +101,14 @@ export default function Recipes({ user }: { user: User }) {
                           <FormItem>
                             <FormLabel>Picture</FormLabel>
                             <FormControl>
-                            <Input type="file" {...field} />
+                            <Input type="file" accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  form.setValue("photo", file); // manually set file
+                                }
+                              }}
+                            />
                             </FormControl>
                           </FormItem>
                         )}
