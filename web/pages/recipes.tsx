@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/form"
 import { createComponentClient } from '@/utils/supabase/clients/component'
 import { useEffect, useState } from 'react'
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+
 
 // const formSchema = Recipe
 
@@ -234,11 +236,13 @@ export default function Recipes({ user }: { user: User }) {
                   {/*<p className='my-[.5rem]'>{recipe.description}</p>*/}
                   
                   {recipe.photo && (
-                    <img
-                      src={recipe.photo}
-                      alt={recipe.name}
-                      className="rounded-md"
-                    />
+                    <AspectRatio ratio={4 / 3}>
+                      <img
+                        src={recipe.photo}
+                        alt={recipe.name}
+                        className="rounded-md object-cover w-full h-full"
+                      />
+                    </AspectRatio>
                   )}
                 </CardContent>
               </Card>
