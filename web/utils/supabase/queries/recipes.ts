@@ -11,7 +11,7 @@ export async function newRecipe(
   let photo = null;
 
   if (values.photo) {
-    const filePath = `${Date.now()}_${values.photo.name}`;
+    const filePath = `${Date.now()}_${values.name}`;
 
     const { data: photoData, error: photoError } = await supabase.storage
       .from("recipe-pictures")

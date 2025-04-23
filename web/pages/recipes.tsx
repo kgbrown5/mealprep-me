@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { DialogClose } from '@radix-ui/react-dialog'
+import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
 import { Recipe } from '@/utils/supabase/models/recipes'
 import { newRecipe } from '@/utils/supabase/queries/recipes'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -184,10 +184,34 @@ export default function Recipes({ user }: { user: User }) {
               <Card key={recipe.name}>
                 <CardHeader className="flex justify-between">
                   <CardTitle className='mt-[.5rem]'>{recipe.name}</CardTitle>
-                  <Button variant="ghost"><Ellipsis/></Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost"><Ellipsis/></Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                      <DialogTitle>{recipe.name}</DialogTitle>
+                      <DialogDescription>{recipe.description}</DialogDescription>
+                      </DialogHeader>
+                      <div>
+                      {recipe.photo && (
+                        <img
+                          src={recipe.photo}
+                          alt={recipe.name}
+                          className="rounded-md"
+                        />
+                      )}
+                      <p className='mt-[1rem]'>{recipe.ingredients}</p>
+                      <p className='mt-[1rem]'>{recipe.custom_text}</p>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="destructive" className='w-full'>Delete Recipe</Button>
+                    </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardHeader>
                 <CardContent>
-                  <p>{recipe.description}</p>
+                  <p className='my-[.5rem]'>{recipe.description}</p>
                   
                   {recipe.photo && (
                     <img
