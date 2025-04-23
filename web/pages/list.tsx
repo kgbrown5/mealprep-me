@@ -1,4 +1,4 @@
-import type { User } from '@supabase/supabase-js'
+//import type { User } from '@supabase/supabase-js'
 import type { GetServerSidePropsContext } from 'next'
 import { createClient } from '@/utils/supabase/clients/server-props'
 import { AppSidebar } from "@/components/app-sidebar"
