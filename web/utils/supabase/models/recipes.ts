@@ -1,15 +1,23 @@
 import { z } from "zod";
 
-export const recipe = z.object({
-  id: z.string(),
-  user_id: z.string(),
+export const RecipeFormInput = z.object({
   name: z.string(),
-  description: z.string().nullable(),
-  custom_text: z.string().nullable(),
-  photo: z.string().nullable(),
+  description: z.string().optional(),
+  custom_text: z.string().optional(),
+  photo: z.instanceof(File).optional(),
+  ingredients: z.string(),
 });
 
-export const recipe_ingredient = z.object({
+export const Recipe = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  custom_text: z.string().optional(),
+  photo: z.instanceof(File).optional(),
+  ingredients: z.string(),
+});
+
+export const RecipeIngredient = z.object({
   id: z.string(),
   recipe_id: z.string(),
   ingredient_id: z.string().nullable(),
@@ -17,17 +25,17 @@ export const recipe_ingredient = z.object({
   unit: z.string().nullable(),
 });
 
-export const ingredient = z.object({
+export const Ingredient = z.object({
   id: z.string(),
   name: z.string(),
 });
 
-export const unit = z.object({
+export const Unit = z.object({
   id: z.string(),
   unit: z.string(),
 });
 
-export const profile = z.object({
+export const Profile = z.object({
   id: z.string(),
   name: z.string().nullable(),
 });
