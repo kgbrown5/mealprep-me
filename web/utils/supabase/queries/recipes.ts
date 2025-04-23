@@ -1,11 +1,11 @@
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import { Recipe } from "../models/recipes";
+import { Recipe, RecipeFormInput } from "../models/recipes";
 import { z } from "zod";
 
 export async function newRecipe(
   supabase: SupabaseClient,
   user_id: string,
-  values: z.infer<typeof Recipe>
+  values: z.infer<typeof RecipeFormInput>
 ) {
   console.log("Recipe Saved!");
   let photo = null;
@@ -49,5 +49,23 @@ export async function newRecipe(
 
   if (data) {
     console.log(`Successful insert! Recipe: ${data}`);
+  }
+}
+
+export async function deleteRecipe(
+  supabase: SupabaseClient,
+  recipe_id: string
+) {
+  const { data, error } = await supabase
+    .from("recipes")
+    .delete()
+    .eq("id", recipe_id);
+
+  if (error) {
+    console.log(`Could not delete recipe: ${error}`);
+  }
+
+  if (data) {
+    console.log("Deleted!");
   }
 }

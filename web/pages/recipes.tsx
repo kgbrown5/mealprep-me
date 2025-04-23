@@ -17,8 +17,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
-import { Recipe } from '@/utils/supabase/models/recipes'
-import { newRecipe } from '@/utils/supabase/queries/recipes'
+import { RecipeFormInput, Recipe } from '@/utils/supabase/models/recipes'
+import { newRecipe, deleteRecipe } from '@/utils/supabase/queries/recipes'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -44,12 +44,25 @@ export default function Recipes({ user }: { user: User }) {
   const [recipes, setRecipes] = useState<RecipeData[]>([])
   // const [loading, setLoading] = useState(true)
 
-  const formSchema = Recipe
+  const formSchema = RecipeFormInput
 
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {},
     })
+
+    const recipeDatabase = supabase
+      .channel('recipe-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'recipes'
+        },
+        (payload) => console.log(payload)
+      )
+      .subscribe()
 
     useEffect(() => {
       let ignore = false
@@ -73,13 +86,17 @@ export default function Recipes({ user }: { user: User }) {
       return () => {
         ignore = true
       }
-    }, [supabase, user.id])
+    }, [supabase, user.id, recipeDatabase])
 
     
 
     const saveRecipe = async (values: z.infer<typeof formSchema>) => {
       await newRecipe(supabase, user.id, values)
         .then(() => setDialogOpen(false))
+    }
+
+    const removeRecipe = async (recipe_id: string) => {
+      await deleteRecipe(supabase, recipe_id)
     }
 
     return (
@@ -205,7 +222,7 @@ export default function Recipes({ user }: { user: User }) {
                       <p className='mt-[1rem]'>{recipe.custom_text}</p>
                     </div>
                     <DialogFooter>
-                      <Button variant="destructive" className='w-full'>Delete Recipe</Button>
+                      <Button variant="destructive" className='w-full' onClick={() => removeRecipe(recipe.id)}>Delete Recipe</Button>
                     </DialogFooter>
                     </DialogContent>
                   </Dialog>

@@ -1,6 +1,15 @@
 import { z } from "zod";
 
+export const RecipeFormInput = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  custom_text: z.string().optional(),
+  photo: z.instanceof(File).optional(),
+  ingredients: z.string(),
+});
+
 export const Recipe = z.object({
+  id: z.string(),
   name: z.string(),
   description: z.string().optional(),
   custom_text: z.string().optional(),
