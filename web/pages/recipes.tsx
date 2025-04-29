@@ -273,8 +273,10 @@ export default function Recipes({ user }: { user: User }) {
                             {/* Ingredients input here */}
                             <FormLabel>Ingredients</FormLabel>
                             <FormControl>
-                            <Input placeholder="Ingredients..." {...field}/>
-                            <IngredientDropdown/>
+                              <div className="flex flex-col space-y-2"> 
+                                <Input placeholder="Ingredients..." {...field} />
+                                <IngredientDropdown />
+                              </div>
                             </FormControl>
                           </FormItem>
                         )}
