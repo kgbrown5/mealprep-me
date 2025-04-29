@@ -4,7 +4,6 @@ import type { GetServerSidePropsContext } from 'next'
 import { createClient } from '@/utils/supabase/clients/server-props'
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { IngredientDropdown } from '@/components/ingredient-dropdown';
 
 /* const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +22,6 @@ export default function Home(/* { user }: { user: User }*/) {
       <main>
         <SidebarTrigger className="m-[1rem]"/>
         <h1>Not yet implemented, check back after Sprint 2!</h1>
-        <IngredientDropdown/>
       </main>
     </SidebarProvider>
   );
