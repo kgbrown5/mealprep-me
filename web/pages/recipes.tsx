@@ -47,7 +47,7 @@ export function IngredientDropdown(){
     type IngredientType = z.infer<typeof Ingredient>; // dying
 
     const [ingredients, setIngredients] = useState<IngredientType[]>([])
-    const [selectedIngredient, selectIngredient] = useState<IngredientType | null>(null)
+    const [selectedIngredients, selectIngredients] = useState<IngredientType[]>([])
     const [isOpen, setIsOpen] = useState(false)
     const [inputValue, setInputValue] = useState("")
 
@@ -67,9 +67,15 @@ export function IngredientDropdown(){
     },[supabase]) // run on mount!
 
     const handleSelectIngredient = (ingredient: IngredientType) => {
-        selectIngredient(ingredient)
-        setIsOpen(false)
-    }
+      setIngredients(prev => {
+          const currentIngredients = prev || [];
+          if (currentIngredients.some(ing => ing.id === ingredient.id)) {
+              return currentIngredients.filter(ing => ing.id !== ingredient.id);
+          }
+          return [...currentIngredients, ingredient];
+      });
+      setIsOpen(false);
+  };
 
     const addNewIngredient = async () => {
         const newIng = inputValue.toLowerCase()
@@ -83,7 +89,7 @@ export function IngredientDropdown(){
 
         if (data && !error){
             setIngredients([...ingredients, data])
-            selectIngredient(data)
+            selectIngredients(data)
             setInputValue("")
             setIsOpen(false)
         }
@@ -113,10 +119,10 @@ export function IngredientDropdown(){
                                 onSelect={() => handleSelectIngredient(ingredient)}
                                 >
                                 <Check
-                                    className={
-                                        "mr-2 h-4 w-4 " +
-                                        (selectedIngredient?.id === ingredient.id ? "opacity-100" : "opacity-0")
-                                    }
+                                  className={
+                                    "mr-2 h-4 w-4 " +
+                                    (selectedIngredients.some(selectedIng => selectedIng.id === ingredient.id) ? "opacity-100" : "opacity-0")
+                                  }
                                 />
                                 {ingredient.name}
                                 </CommandItem>
@@ -270,7 +276,6 @@ export default function Recipes({ user }: { user: User }) {
                         name="ingredients"
                         render={({ field }) => (
                           <FormItem>
-                            {/* Ingredients input here */}
                             <FormLabel>Ingredients</FormLabel>
                             <FormControl>
                               <div className="flex flex-col space-y-2"> 

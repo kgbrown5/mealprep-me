@@ -32,7 +32,7 @@ export function AppSidebar() {
       icon: Notebook,
     },
     {
-      title: "My List",
+      title: "Grocery List",
       url: "/list",
       icon: ListCheck,
     }
