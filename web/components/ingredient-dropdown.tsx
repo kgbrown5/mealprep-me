@@ -26,7 +26,7 @@ export function IngredientDropdown(){
 
     useEffect(() => {
         const loadIngredients = async () => {
-            const {data, error} = await supabase.from("ingredients").select("*").order("name", {ascending: true})
+            const {data, error} = await supabase.from("ingredients").select("*").order("name")
             if (data && !error){
                 const parsedIngred = z.array(Ingredient).safeParse(data);
                 if (parsedIngred.success) {
