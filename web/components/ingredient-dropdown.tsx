@@ -9,18 +9,18 @@ import {
 import { Button } from './ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './ui/command'
 import { Check, Plus } from "lucide-react"
+import { z } from "zod"
+import { Ingredient } from '@/utils/supabase/models/recipes'
 
 
-interface Ingredient{ // format of ingredients stored in supabase
-    id: string
-    name: string
-}
 
 export function IngredientDropdown(){
     const supabase = createComponentClient();
+    type IngredientType = z.infer<typeof Ingredient>; // dying
+
     
-    const [ingredients, setIngredients] = useState<Ingredient[]>([])
-    const [selectedIngredient, selectIngredient] = useState<Ingredient | null>(null)
+    const [ingredients, setIngredients] = useState<IngredientType[]>([])
+    const [selectedIngredient, selectIngredient] = useState<IngredientType | null>(null)
     const [isOpen, setIsOpen] = useState(false)
     const [inputValue, setInputValue] = useState("")
 
@@ -28,13 +28,18 @@ export function IngredientDropdown(){
         const loadIngredients = async () => {
             const {data, error} = await supabase.from("ingredients").select("*").order("name", {ascending: true})
             if (data && !error){
-                setIngredients(data) // will this format correctly?
+                const parsedIngred = z.array(Ingredient).safeParse(data);
+                if (parsedIngred.success) {
+                    setIngredients(parsedIngred.data)
+                  } else {
+                    console.error("Could not parse ingredient from database.", parsedIngred.error)
+                  }
             }
         }
         loadIngredients()
     },[supabase]) // run on mount!
 
-    const handleSelectIngredient = (ingredient: Ingredient) => {
+    const handleSelectIngredient = (ingredient: IngredientType) => {
         selectIngredient(ingredient)
         setIsOpen(false)
     }
@@ -46,8 +51,8 @@ export function IngredientDropdown(){
             return // if it matches existing ingredient, don't want to add new one
         }
 
-        const {data, error} = await supabase.from("ingredients").insert({name: newIng})
-        // did i do the insert right? or should it just be insert(newIng)? and do i need .select or .single
+        const {data, error} = await supabase.from("ingredients").insert({name: newIng}).select().single()
+        // did i do the insert right? or should it just be insert(newIng)?
 
         if (data && !error){
             setIngredients([...ingredients, data])
