@@ -80,15 +80,14 @@ export function IngredientDropdown(){
     },[supabase]) // run on mount!
 
     const handleSelectIngredient = (ingredient: IngredientType) => {
-      setIngredients(prev => {
-          const currentIngredients = prev || [];
-          if (currentIngredients.some(ing => ing.id === ingredient.id)) {
-              return currentIngredients.filter(ing => ing.id !== ingredient.id);
-          }
-          return [...currentIngredients, ingredient];
+      selectIngredients((prevSelected) => {
+        if (prevSelected.some(ing => ing.id === ingredient.id)) {
+          return prevSelected.filter(ing => ing.id !== ingredient.id); // unselect
+        }
+        return [...prevSelected, ingredient]; // select
       });
       setIsOpen(false);
-  };
+    };
 
     const addNewIngredient = async () => {
         const newIng = inputValue.toLowerCase()
@@ -153,6 +152,23 @@ export function IngredientDropdown(){
               </Button>
             )}
             </Command>
+            {selectedIngredients.length > 0 && (
+              <div className="mt-4">
+                <h4 className="font-medium text-sm mb-2">Selected Ingredients:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedIngredients.map((ingredient) => (
+                    <Button
+                      key={ingredient.id}
+                      variant="outline"
+                      className="text-xs px-2 py-1"
+                      onClick={() => handleSelectIngredient(ingredient)}
+                    >
+                      {ingredient.name} <span className="ml-1">✕</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
             </PopoverContent>
         </Popover>
     )
