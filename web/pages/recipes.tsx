@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,DialogClose, DialogDescription
 } from "@/components/ui/dialog"
-import { RecipeFormInput, Recipe, Ingredient } from '@/utils/supabase/models/recipes'
+import { RecipeFormInput, Recipe, Ingredient, Unit } from '@/utils/supabase/models/recipes'
 import { newRecipe, deleteRecipe } from '@/utils/supabase/queries/recipes'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -45,11 +45,14 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '
 export function IngredientDropdown(){
     const supabase = createComponentClient();
     type IngredientType = z.infer<typeof Ingredient>; // dying
+    type UnitType = z.infer<typeof Unit>;
 
     const [ingredients, setIngredients] = useState<IngredientType[]>([])
     const [selectedIngredients, selectIngredients] = useState<IngredientType[]>([])
     const [isOpen, setIsOpen] = useState(false)
     const [inputValue, setInputValue] = useState("")
+    const [units, setUnits] = useState<UnitType[]>([]);
+
 
     useEffect(() => {
         const loadIngredients = async () => {
@@ -62,8 +65,18 @@ export function IngredientDropdown(){
                     console.error("Could not parse ingredient from database.", parsedIngred.error)
                   }
             }
-        }
+        };
         loadIngredients()
+        
+        const loadUnits = async () => {
+          const { data, error } = await supabase.from("units").select("*");
+          if (data && !error) {
+              setUnits(data.map(unit => unit.name)); // assuming 'name' is the column for unit names
+          } else {
+              console.error("Failed to fetch units", error);
+          }
+      };
+      loadUnits()
     },[supabase]) // run on mount!
 
     const handleSelectIngredient = (ingredient: IngredientType) => {
@@ -344,7 +357,6 @@ export default function Recipes({ user }: { user: User }) {
                 </CardHeader>
                 <CardContent>
                   {/*<p className='my-[.5rem]'>{recipe.description}</p>*/}
-                  
                   {recipe.photo && (
                     <AspectRatio ratio={4 / 3}>
                       <img
