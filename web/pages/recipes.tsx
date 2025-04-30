@@ -40,18 +40,24 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '
 
 
 // const formSchema = Recipe
-// pagination or scroll? scroll may be easier
+type IngredientType = z.infer<typeof Ingredient>; // dying
 
-export function IngredientDropdown(){
+export function IngredientDropdown({
+  selectedIngredients,
+  setSelectedIngredients
+}: {
+  selectedIngredients: IngredientType[],
+  setSelectedIngredients: React.Dispatch<React.SetStateAction<IngredientType[]>>
+}) {
     const supabase = createComponentClient();
-    type IngredientType = z.infer<typeof Ingredient>; // dying
     type UnitType = z.infer<typeof Unit>;
 
     const [ingredients, setIngredients] = useState<IngredientType[]>([])
-    const [selectedIngredients, selectIngredients] = useState<IngredientType[]>([])
     const [isOpen, setIsOpen] = useState(false)
     const [inputValue, setInputValue] = useState("")
     const [units, setUnits] = useState<UnitType[]>([]);
+
+    console.log(units)
 
 
     useEffect(() => {
@@ -66,7 +72,7 @@ export function IngredientDropdown(){
                   }
             }
         };
-        loadIngredients()
+        loadIngredients();
         
         const loadUnits = async () => {
           const { data, error } = await supabase.from("units").select("*");
@@ -77,10 +83,10 @@ export function IngredientDropdown(){
           }
       };
       loadUnits()
-    },[supabase]) // run on mount!
+    },[supabase]); // run on mount!
 
     const handleSelectIngredient = (ingredient: IngredientType) => {
-      selectIngredients((prevSelected) => {
+      setSelectedIngredients((prevSelected) => {
         if (prevSelected.some(ing => ing.id === ingredient.id)) {
           return prevSelected.filter(ing => ing.id !== ingredient.id); // unselect
         }
@@ -91,6 +97,10 @@ export function IngredientDropdown(){
 
     const addNewIngredient = async () => {
         const newIng = inputValue.toLowerCase()
+        
+        if (!newIng.trim()) {
+          return; // don't wanna add empty ingrwdoents
+        }
 
         if (ingredients.find((ing) => ing.name === newIng)){ // should all be in lowercase already
             return // if it matches existing ingredient, don't want to add new one
@@ -100,10 +110,10 @@ export function IngredientDropdown(){
         // did i do the insert right? or should it just be insert(newIng)?
 
         if (data && !error){
-            setIngredients([...ingredients, data])
-            selectIngredients(data)
-            setInputValue("")
-            setIsOpen(false)
+          setIngredients([...ingredients, data]);
+          setSelectedIngredients([...selectedIngredients, data]);
+          setInputValue("");
+          setIsOpen(false);
         }
     }
 
@@ -175,19 +185,28 @@ export function IngredientDropdown(){
 }
 
 export default function Recipes({ user }: { user: User }) {
+  const formSchema = RecipeFormInput
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const supabase = createComponentClient();
   type RecipeData = z.infer<typeof Recipe>;
 
   const [recipes, setRecipes] = useState<RecipeData[]>([])
+
   // const [loading, setLoading] = useState(true)
+  const [selectedIngredients, setSelectedIngredients] = useState<IngredientType[]>([]);
 
-  const formSchema = RecipeFormInput
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {},
+  })
 
-    const form = useForm<z.infer<typeof formSchema>>({
-      resolver: zodResolver(formSchema),
-      defaultValues: {},
-    })
+  useEffect(() => {
+    if (form) {
+      form.setValue("ingredients", selectedIngredients)
+    }
+  }, [selectedIngredients, form]);
+
 
     const recipeDatabase = supabase
       .channel('recipe-changes')
@@ -225,7 +244,10 @@ export default function Recipes({ user }: { user: User }) {
         ignore = true
       }
     }, [supabase, user.id, recipeDatabase])
-
+    
+    useEffect(() => {
+      form.setValue('ingredients', selectedIngredients);
+    }, [selectedIngredients, form]);
     
 
     const saveRecipe = async (values: z.infer<typeof formSchema>) => {
@@ -236,8 +258,6 @@ export default function Recipes({ user }: { user: User }) {
     const removeRecipe = async (recipe_id: string) => {
       await deleteRecipe(supabase, recipe_id)
     }
-
-
 
     return (
       <SidebarProvider>
@@ -303,13 +323,19 @@ export default function Recipes({ user }: { user: User }) {
                       <FormField
                         control={form.control}
                         name="ingredients"
-                        render={({ field }) => (
+                        render={() => ( // took out {field} from ()
                           <FormItem>
                             <FormLabel>Ingredients</FormLabel>
                             <FormControl>
                               <div className="flex flex-col space-y-2"> 
-                                <Input placeholder="Ingredients..." {...field} />
-                                <IngredientDropdown />
+                                <Input placeholder="Ingredients..."
+                                  value={selectedIngredients.map(ingredient => ingredient.name).join(', ')}
+                                  onChange={() => {}}  
+                                />
+                                <IngredientDropdown
+                                  selectedIngredients={selectedIngredients}
+                                  setSelectedIngredients={setSelectedIngredients}
+                                />
                               </div>
                             </FormControl>
                           </FormItem>
@@ -318,7 +344,7 @@ export default function Recipes({ user }: { user: User }) {
                       <FormField
                         control={form.control}
                         name="custom_text"
-                        render={({ field }) => (
+                        render={({ field }) => ( // took out {field} from ()
                           <FormItem>
                                   <FormLabel>Details</FormLabel>
                                   <FormControl>
