@@ -20,10 +20,8 @@ Users can create, delete, and view recipes. Recipes include a title, a list of i
 
 Implemented using: Shadcn Cards, Dialogs, Inputs, React / React Query, and Supabase Realtime to update a user's Recipe Book whenever a recipe is created or deleted.
 
-## To Be Implemented
-
-### Meal Planning
+### Feature 2: Meal Planning
 Planning out each day in meals and linking to relevant recipes.
 
-### Shopping List
+### Feature 3: Shopping List
 Automatically populated with the ingredients from recipes "planned" for a given week.
