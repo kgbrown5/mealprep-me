@@ -427,7 +427,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           permanent: false,
         },
       }
-    }
+    } // so i can push
     return {
       props: {
         user: data.user,
