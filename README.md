@@ -9,20 +9,19 @@
 ![Tailwind](https://img.shields.io/badge/-Tailwind-05122A?style=flat&logo=tailwindcss)
 ![Supabase](https://img.shields.io/badge/-Supabase-05122A?style=flat&logo=supabase)
 
-*Add some screenshots or graphics here that show your app being used!*
-![Recipe page](recipe.png)
-
 Meet MealPrep Me! This website helps users in planning out their weekly meals, simplifying recipe storage, grocery planning, and nutrition goals.
 
 ## Current Features
 
 ### Feature 1: Recipe Cards
 Users can create, delete, and view recipes. Recipes include a title, a list of ingredients, and optional photos, descriptions, or links.
+![Recipe page](recipe.png)
 
 ### Feature 2: Meal Planning
 Plan each day's meals ahead of time and link to relevant saved recipes!
 
 ### Feature 3: Grocery List
 Users can add, remove, and check off items on their grocery lists.
+![Grocery List](shopping-list.png)
 
 These features were implemented using: Shadcn elements, React / React Query, and Supabase (Realtime).
