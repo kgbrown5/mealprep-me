@@ -262,7 +262,7 @@ export default function Recipes({ user }: { user: User }) {
     return (
       <SidebarProvider>
         <AppSidebar />
-        <main className='w-full h-screen'>
+        <main className="w-full h-screen bg-background text-foreground">
         <SidebarTrigger className='my-[1.5rem] mx-[2.5rem]' />
           <div className='min-h-[75vh] grid grid-cols-3 grid-rows-2 gap-[2rem] mx-[3rem]'>
             <div className='col-start-1 col-end-2 row-start-1 row-end-2 flex flex-col justify-between'>

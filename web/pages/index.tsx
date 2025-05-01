@@ -19,7 +19,7 @@ export default function Home(/* { user }: { user: User }*/) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <main className="w-full h-screen bg-background text-foreground">
         <SidebarTrigger className="m-[1rem]"/>
         <h1>Not yet implemented, check back after Sprint 2!</h1>
       </main>
