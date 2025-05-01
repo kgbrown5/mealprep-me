@@ -56,6 +56,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 
+
 // const formSchema = Recipe
 type IngredientType = z.infer<typeof Ingredient>; // dying
 
@@ -212,11 +213,14 @@ export default function Recipes({ user }: { user: User }) {
 
   const [recipes, setRecipes] = useState<RecipeData[]>([]);
 
+  
   // const [loading, setLoading] = useState(true)
   const [selectedIngredients, setSelectedIngredients] = useState<
     IngredientType[]
   >([]);
 
+
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
@@ -242,6 +246,7 @@ export default function Recipes({ user }: { user: User }) {
     .subscribe();
 
   useEffect(() => {
+
     const loadRecipesWithIngredients = async () => {
       // Fetch recipes
       const { data: recipes, error: recipeError } = await supabase

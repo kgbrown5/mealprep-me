@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 export const Recipe = z.object({
@@ -32,3 +33,4 @@ export const Profile = z.object({
   id: z.string(),
   name: z.string().nullable(),
 });
+
