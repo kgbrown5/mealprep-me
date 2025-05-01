@@ -7,17 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
-import { Plus, Ellipsis } from 'lucide-react';
+import { Check, Plus, Ellipsis } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger,DialogClose, DialogDescription
 } from "@/components/ui/dialog"
-import { DialogClose, DialogDescription } from '@radix-ui/react-dialog'
-import { RecipeFormInput, Recipe } from '@/utils/supabase/models/recipes'
+import { RecipeFormInput, Recipe, Ingredient, Unit } from '@/utils/supabase/models/recipes'
 import { newRecipe, deleteRecipe } from '@/utils/supabase/queries/recipes'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -32,26 +31,182 @@ import {
 import { createComponentClient } from '@/utils/supabase/clients/component'
 import { useEffect, useState } from 'react'
 import { AspectRatio } from "@/components/ui/aspect-ratio"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
 
 
 // const formSchema = Recipe
+type IngredientType = z.infer<typeof Ingredient>; // dying
 
-// pagination or scroll? scroll may be easier
+export function IngredientDropdown({
+  selectedIngredients,
+  setSelectedIngredients
+}: {
+  selectedIngredients: IngredientType[],
+  setSelectedIngredients: React.Dispatch<React.SetStateAction<IngredientType[]>>
+}) {
+    const supabase = createComponentClient();
+    type UnitType = z.infer<typeof Unit>;
+
+    const [ingredients, setIngredients] = useState<IngredientType[]>([])
+    const [isOpen, setIsOpen] = useState(false)
+    const [inputValue, setInputValue] = useState("")
+    const [units, setUnits] = useState<UnitType[]>([]);
+
+    console.log(units)
+
+
+    useEffect(() => {
+        const loadIngredients = async () => {
+            const {data, error} = await supabase.from("ingredients").select("*").order("name")
+            if (data && !error){
+                const parsedIngred = z.array(Ingredient).safeParse(data);
+                if (parsedIngred.success) {
+                    setIngredients(parsedIngred.data)
+                  } else {
+                    console.error("Could not parse ingredient from database.", parsedIngred.error)
+                  }
+            }
+        };
+        loadIngredients();
+        
+        const loadUnits = async () => {
+          const { data, error } = await supabase.from("units").select("*");
+          if (data && !error) {
+              setUnits(data.map(unit => unit.name)); // assuming 'name' is the column for unit names
+          } else {
+              console.error("Failed to fetch units", error);
+          }
+      };
+      loadUnits()
+    },[supabase]); // run on mount!
+
+    const handleSelectIngredient = (ingredient: IngredientType) => {
+      setSelectedIngredients((prevSelected) => {
+        if (prevSelected.some(ing => ing.id === ingredient.id)) {
+          return prevSelected.filter(ing => ing.id !== ingredient.id); // unselect
+        }
+        return [...prevSelected, ingredient]; // select
+      });
+      setIsOpen(false);
+    };
+
+    const addNewIngredient = async () => {
+        const newIng = inputValue.toLowerCase()
+        
+        if (!newIng.trim()) {
+          return; // don't wanna add empty ingrwdoents
+        }
+
+        if (ingredients.find((ing) => ing.name === newIng)){ // should all be in lowercase already
+            return // if it matches existing ingredient, don't want to add new one
+        }
+
+        const {data, error} = await supabase.from("ingredients").insert({name: newIng}).select().single()
+        // did i do the insert right? or should it just be insert(newIng)?
+
+        if (data && !error){
+          setIngredients([...ingredients, data]);
+          setSelectedIngredients([...selectedIngredients, data]);
+          setInputValue("");
+          setIsOpen(false);
+        }
+    }
+
+    return(
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+                <Button variant="outline">Add ingredient</Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+                <Command>
+                    <CommandInput placeholder="Add an ingredient..."
+                        value={inputValue}
+                        onValueChange={setInputValue}
+                        onKeyDown={(e) => {
+                        if (e.key === "Enter" && ingredients.length === 0) {
+                            addNewIngredient()
+                        }
+                    }}/>
+                        <CommandEmpty>No ingredient found, press enter to add this to your list.</CommandEmpty>
+                        <CommandGroup>
+                            {ingredients.map((ingredient) => (
+                                <CommandItem
+                                key={ingredient.id}
+                                value={ingredient.name}
+                                onSelect={() => handleSelectIngredient(ingredient)}
+                                >
+                                <Check
+                                  className={
+                                    "mr-2 h-4 w-4 " +
+                                    (selectedIngredients.some(selectedIng => selectedIng.id === ingredient.id) ? "opacity-100" : "opacity-0")
+                                  }
+                                />
+                                {ingredient.name}
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    {inputValue &&
+            !ingredients.some(
+              (i) => i.name.toLowerCase() === inputValue.toLowerCase()
+            ) && (
+              <Button
+                variant="ghost"
+                onClick={addNewIngredient}
+            >
+                <Plus/> Add “{inputValue}”
+              </Button>
+            )}
+            </Command>
+            {selectedIngredients.length > 0 && (
+              <div className="mt-4">
+                <h4 className="font-medium text-sm mb-2">Selected Ingredients:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedIngredients.map((ingredient) => (
+                    <Button
+                      key={ingredient.id}
+                      variant="outline"
+                      className="text-xs px-2 py-1"
+                      onClick={() => handleSelectIngredient(ingredient)}
+                    >
+                      {ingredient.name} <span className="ml-1">✕</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+            </PopoverContent>
+        </Popover>
+    )
+}
 
 export default function Recipes({ user }: { user: User }) {
+  const formSchema = RecipeFormInput
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const supabase = createComponentClient();
   type RecipeData = z.infer<typeof Recipe>;
 
   const [recipes, setRecipes] = useState<RecipeData[]>([])
+
   // const [loading, setLoading] = useState(true)
+  const [selectedIngredients, setSelectedIngredients] = useState<IngredientType[]>([]);
 
-  const formSchema = RecipeFormInput
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {},
+  })
 
-    const form = useForm<z.infer<typeof formSchema>>({
-      resolver: zodResolver(formSchema),
-      defaultValues: {},
-    })
+  useEffect(() => {
+    if (form) {
+      form.setValue("ingredients", selectedIngredients)
+    }
+  }, [selectedIngredients, form]);
+
 
     const recipeDatabase = supabase
       .channel('recipe-changes')
@@ -89,7 +244,10 @@ export default function Recipes({ user }: { user: User }) {
         ignore = true
       }
     }, [supabase, user.id, recipeDatabase])
-
+    
+    useEffect(() => {
+      form.setValue('ingredients', selectedIngredients);
+    }, [selectedIngredients, form]);
     
 
     const saveRecipe = async (values: z.infer<typeof formSchema>) => {
@@ -104,7 +262,7 @@ export default function Recipes({ user }: { user: User }) {
     return (
       <SidebarProvider>
         <AppSidebar />
-        <main className='w-full h-screen'>
+        <main className="w-full h-screen bg-background text-foreground">
         <SidebarTrigger className='my-[1.5rem] mx-[2.5rem]' />
           <div className='min-h-[75vh] grid grid-cols-3 grid-rows-2 gap-[2rem] mx-[3rem]'>
             <div className='col-start-1 col-end-2 row-start-1 row-end-2 flex flex-col justify-between'>
@@ -165,13 +323,20 @@ export default function Recipes({ user }: { user: User }) {
                       <FormField
                         control={form.control}
                         name="ingredients"
-                        render={({ field }) => (
+                        render={() => ( // took out {field} from ()
                           <FormItem>
-                            {/* Ingredients input here */}
                             <FormLabel>Ingredients</FormLabel>
                             <FormControl>
-                            <Input placeholder="Ingredients..." {...field}/>
-                            {/* ^^ if just a text input */}
+                              <div className="flex flex-col space-y-2"> 
+                                <Input placeholder="Ingredients..."
+                                  value={selectedIngredients.map(ingredient => ingredient.name).join(', ')}
+                                  onChange={() => {}}  
+                                />
+                                <IngredientDropdown
+                                  selectedIngredients={selectedIngredients}
+                                  setSelectedIngredients={setSelectedIngredients}
+                                />
+                              </div>
                             </FormControl>
                           </FormItem>
                         )}
@@ -179,7 +344,7 @@ export default function Recipes({ user }: { user: User }) {
                       <FormField
                         control={form.control}
                         name="custom_text"
-                        render={({ field }) => (
+                        render={({ field }) => ( // took out {field} from ()
                           <FormItem>
                                   <FormLabel>Details</FormLabel>
                                   <FormControl>
@@ -191,9 +356,9 @@ export default function Recipes({ user }: { user: User }) {
                     </form>
                   </Form>
                   <DialogFooter className='flex justify-between'>
-                    <DialogClose asChild>
-                      <Button variant="secondary">Cancel</Button>
-                    </DialogClose>
+                  <DialogClose asChild>
+                    <Button variant="secondary">Cancel</Button>
+                  </DialogClose>
                     <Button type="submit" form="new-recipe">Save</Button>
                   </DialogFooter>
                 </DialogContent>
@@ -235,8 +400,7 @@ export default function Recipes({ user }: { user: User }) {
                   </Dialog>
                 </CardHeader>
                 <CardContent>
-                  {/*<p className='my-[.5rem]'>{recipe.description}</p>*/}
-                  
+                  {/*{/*<p className='my-[.5rem]'>{recipe.description}</p>*/}
                   {recipe.photo && (
                     <AspectRatio ratio={4 / 3}>
                       <img
@@ -265,7 +429,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           permanent: false,
         },
       }
-    }
+    } // so i can push
     return {
       props: {
         user: data.user,
