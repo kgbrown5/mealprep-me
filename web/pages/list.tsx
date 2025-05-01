@@ -58,7 +58,7 @@ export default function List({ user }: { user: User }) {
         <AppSidebar />
         <main style={{ padding: "2rem" }}>
         <SidebarTrigger className='my-[1.5rem] mx-[2.5rem]' />
-      <h1>Grocery List</h1>
+      <h1>Let&apos;s go shopping! </h1>
       <div style={{ marginBottom: 8 }}>
         <input
           type="text"
