@@ -221,29 +221,53 @@ export default function Recipes({ user }: { user: User }) {
       )
       .subscribe()
 
-    useEffect(() => {
-      let ignore = false
-  
-      const loadRecipes = async () => {
-        // setLoading(true)
-        const { data, error } = await supabase
-          .from("recipes")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-  
-        if (!ignore) {
-          if (error) console.error(error)
-          setRecipes(data ?? [])
-          // setLoading(false)
-        }
-      }
-  
-      loadRecipes()
-      return () => {
-        ignore = true
-      }
-    }, [supabase, user.id, recipeDatabase])
+      useEffect(() => {
+        const loadRecipesWithIngredients = async () => {
+          // Fetch recipes
+          const { data: recipes, error: recipeError } = await supabase
+            .from("recipes")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false });
+      
+          if (recipeError || !recipes) {
+            console.error(recipeError);
+            return;
+          }
+      
+          // Fetch ingredients linked to each recipe
+          const { data: recipeIngredients, error: ingredientError } = await supabase
+            .from("recipe_ingredients")
+            .select("recipe_id, ingredient_id")
+            .in("recipe_id", recipes.map(recipe => recipe.id));
+      
+          if (ingredientError) {
+            console.error(ingredientError);
+            return;
+          }
+      
+          // Fetch all ingredients from the database
+          const { data: allIngredients, error: ingredientsError } = await supabase.from("ingredients").select("*");
+      
+          if (ingredientsError) {
+            console.error(ingredientsError);
+            return;
+          }
+      
+          // Map ingredients to their respective recipes
+          const recipesWithIngredients = recipes.map(recipe => ({
+            ...recipe,
+            ingredients: recipeIngredients
+              .filter(ri => ri.recipe_id === recipe.id)
+              .map(ri => allIngredients.find(ing => ing.id === ri.ingredient_id)?.name)
+              .filter(Boolean)
+          }));
+      
+          setRecipes(recipesWithIngredients);
+        };
+      
+        loadRecipesWithIngredients();
+      }, [supabase, user.id, recipeDatabase]);
     
     useEffect(() => {
       form.setValue('ingredients', selectedIngredients);
@@ -251,9 +275,21 @@ export default function Recipes({ user }: { user: User }) {
     
 
     const saveRecipe = async (values: z.infer<typeof formSchema>) => {
-      await newRecipe(supabase, user.id, values)
-        .then(() => setDialogOpen(false))
-    }
+      // Create a new recipe
+      const recipeResponse = await newRecipe(supabase, user.id, values);
+    
+      if (recipeResponse.data && !recipeResponse.error) {
+        const recipeId = recipeResponse.data.id; // Assuming response contains an ID
+    
+        for (const ingredient of selectedIngredients) {
+          await supabase.from('recipe_ingredients').insert({
+            recipe_id: recipeId,
+            ingredient_id: ingredient.id
+          });
+        }
+        setDialogOpen(false);
+      }
+    };
 
     const removeRecipe = async (recipe_id: string) => {
       await deleteRecipe(supabase, recipe_id)

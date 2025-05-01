@@ -3,9 +3,16 @@ import type { GetServerSidePropsContext } from 'next'
 import { createClient } from '@/utils/supabase/clients/server-props'
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+// import { createComponentClient } from '@/utils/supabase/clients/component';
 
 export default function List(/*{ user }: { user: User }*/) {
-    return (
+    // const supabase = createComponentClient();
+    // const [ingredientsList, setIngredientsList] = useState<IngredientType[]>([]);
+    
+    // type IngredientType = z.infer<typeof Ingredient>; // dying
+  
+  
+  return (
       <SidebarProvider>
         <AppSidebar />
         <main className="w-full h-screen bg-background text-foreground">
