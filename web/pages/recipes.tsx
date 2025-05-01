@@ -400,7 +400,7 @@ export default function Recipes({ user }: { user: User }) {
                   </Dialog>
                 </CardHeader>
                 <CardContent>
-                  {/*{/*<p className='my-[.5rem]'>{recipe.description}</p>*/}*/}
+                  {/*{/*<p className='my-[.5rem]'>{recipe.description}</p>*/}
                   {recipe.photo && (
                     <AspectRatio ratio={4 / 3}>
                       <img
