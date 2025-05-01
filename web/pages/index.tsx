@@ -347,9 +347,7 @@ export default function Home({ user }: { user: User }) {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction asChild>
-                      <Button variant="destructive" onClick={resetData}>
-                        Continue
-                      </Button>
+                      <Button variant="destructive">Continue</Button>
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
