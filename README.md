@@ -23,5 +23,5 @@ Implemented using: Shadcn Cards, Dialogs, Inputs, React / React Query, and Supab
 ### Feature 2: Meal Planning
 Planning out each day in meals and linking to relevant recipes.
 
-### Feature 3: Shopping List
-Automatically populated with the ingredients from recipes "planned" for a given week.
+### Feature 3: Grocery List
+Users can add, remove, and check off items on their grocery lists.
