@@ -1,17 +1,10 @@
-
 "use client";
 
 import type { GetServerSidePropsContext } from "next";
 import { createClient } from "@/utils/supabase/clients/server-props";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  Card,
-  CardHeader,
-  CardDescription,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -28,7 +21,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { createComponentClient } from "@/utils/supabase/clients/component";
@@ -84,7 +76,7 @@ function DayCard(props: {
       props.user.id,
       props.day.name.toLowerCase(),
       values
-    );
+    ).then(() => console.log("saved week!"));
   };
 
   return (
@@ -306,7 +298,7 @@ export default function Home({ user }: { user: User }) {
 
   const dayProps = planner.map((day) => ({ day, user, recipes, supabase }));
 
-  const resetData = () => {};
+  // const resetData = () => {};
 
   const saveWeek = () => {
     const forms = [
@@ -371,7 +363,6 @@ export default function Home({ user }: { user: User }) {
     </SidebarProvider>
   );
 }
-
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const supabase = createClient(context);
