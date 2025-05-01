@@ -5,7 +5,10 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { createComponentClient } from '@/utils/supabase/clients/component';
 import { useEffect, useState } from "react";
-
+import { Trash } from 'lucide-react';
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type GroceryItem = {
   id: string;
@@ -17,15 +20,12 @@ type GroceryItem = {
 export default function List({ user }: { user: User }) {
     const supabase = createComponentClient();
   
-    // const [ingredientsList, setIngredientsList] = useState<IngredientType[]>([]);
-    // type IngredientType = z.infer<typeof Ingredient>; // dying
-
     const [items, setItems] = useState<GroceryItem[]>([]);
     const [newItem, setNewItem] = useState("");
   
     useEffect(() => {
-      fetchItems();
-    }, );
+      if (user.id) fetchItems();
+    }, [user.id, supabase]);
   
     async function fetchItems() {
       const { data } = await supabase
@@ -52,32 +52,59 @@ export default function List({ user }: { user: User }) {
       setItems(items => items.filter(item => item.id !== id));
     }
   
+    async function toggleCompletion(id: string, completed: boolean) {
+      await supabase
+        .from("grocery_list")
+        .update({ completed })
+        .eq("id", id);
+      setItems(items => items.map(item => 
+        item.id === id ? { ...item, completed } : item
+      ));
+    }
   
-  return (
+    return (
       <SidebarProvider>
         <AppSidebar />
-        <main style={{ padding: "2rem" }}>
-        <SidebarTrigger className='my-[1.5rem] mx-[2.5rem]' />
-      <h1>Let&apos;s go shopping! </h1>
-      <div style={{ marginBottom: 8 }}>
-        <input
-          type="text"
-          value={newItem}
-          placeholder="Add new ingredient"
-          onChange={e => setNewItem(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter") addItem(); }}
-        />
-        <button onClick={addItem} style={{ marginLeft: 8 }}>Add</button>
-      </div>
-      <ul>
-        {items.map(item =>
-          <li key={item.id} style={{ display: "flex", alignItems: "center" }}>
-            <span style={{ flex: 1 }}>{item.name}</span>
-            <button onClick={() => removeItem(item.id)}>Remove</button>
-          </li>
-        )}
-      </ul>
-    </main>
+        <main className="p-8">
+          <SidebarTrigger className="my-6 mx-10" />
+          <h1 className="text-3xl font-semibold mb-6">Let&apos;s go shopping!</h1>
+            <div className="flex items-center mb-4 space-x-2">
+            <Input
+              type="text"
+              value={newItem}
+              placeholder="Add new ingredient"
+              onChange={e => setNewItem(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter") addItem(); }}
+              className="w-full max-w-xs"
+            />
+            <Button 
+              onClick={addItem}
+              className="w-24"
+            >
+              Add
+            </Button>
+          </div>
+          <ul className="space-y-4">
+            {items.map(item => (
+              <li key={item.id} className="flex items-center space-x-4">
+                <Checkbox
+                  checked={item.completed}
+                  onCheckedChange={() => toggleCompletion(item.id, !item.completed)}
+                />
+                <span className={`flex-1 ${item.completed ? 'line-through text-gray-400' : ''}`}>
+                  {item.name}
+                </span>
+                <Button 
+                  onClick={() => removeItem(item.id)} 
+                  variant="link" 
+                  className="text-red-500"
+                >
+                  <Trash />
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </main>
       </SidebarProvider>
     );
 }
