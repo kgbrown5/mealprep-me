@@ -11,17 +11,17 @@
 
 *Add some screenshots or graphics here that show your app being used!*
 
-*Include a short description of your app here.*
+Meet MealPrep Me! This website helps users in planning our their weekly meals, simplifying recipe storage, grocery planning, and nutrition goals.
 
 ## Current Features
 
 ### Feature 1: Recipe Cards
 Users can create, delete, and view recipes. Recipes include a title, a list of ingredients, and optional photos, descriptions, or links.
 
-Implemented using: Shadcn Cards, Dialogs, Inputs, React / React Query, and Supabase Realtime to update a user's Recipe Book whenever a recipe is created or deleted.
-
 ### Feature 2: Meal Planning
-Planning out each day in meals and linking to relevant recipes.
+Plan each day's meals ahead of time and link to relevant saved recipes!
 
 ### Feature 3: Grocery List
 Users can add, remove, and check off items on their grocery lists.
+
+These features were implemented using: Shadcn elements, React / React Query, and Supabase (Realtime).
