@@ -1,4 +1,4 @@
-# MealPrep Me (WIP)
+# MealPrep Me
 
 > Developed by Caroline Bryan and Katie Brown for COMP 426: Modern Web Programming at UNC-Chapel Hill.
 
