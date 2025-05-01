@@ -1,4 +1,4 @@
-# << APP NAME >>
+# MealPrep Me (WIP)
 
 > Developed by Caroline Bryan and Katie Brown for COMP 426: Modern Web Programming at UNC-Chapel Hill.
 
@@ -13,10 +13,17 @@
 
 *Include a short description of your app here.*
 
-## Features
+## Current Features
 
-*Describe the features of your app here.*
+### Feature 1: Recipe Cards
+Users can create, delete, and view recipes. Recipes include a title, a list of ingredients, and optional photos, descriptions, or links.
 
-## ...
+Implemented using: Shadcn Cards, Dialogs, Inputs, React / React Query, and Supabase Realtime to update a user's Recipe Book whenever a recipe is created or deleted.
 
-Feel free to add other sections as you see fit!
+## To Be Implemented
+
+### Meal Planning
+Planning out each day in meals and linking to relevant recipes.
+
+### Shopping List
+Automatically populated with the ingredients from recipes "planned" for a given week.

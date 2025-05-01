@@ -382,12 +382,14 @@ export default function Recipes({ user }: { user: User }) {
                       </DialogHeader>
                       <div>
                       {recipe.photo && (
-                        <img
-                          src={recipe.photo}
-                          alt={recipe.name}
-                          className="rounded-md"
-                        />
-                      )}
+                    <AspectRatio ratio={4 / 3}>
+                      <img
+                        src={recipe.photo}
+                        alt={recipe.name}
+                        className="rounded-md object-cover w-full h-full"
+                      />
+                    </AspectRatio>
+                  )}
                       <p className='mt-[1rem]'>{recipe.ingredients}</p>
                       <p className='mt-[1rem]'>{recipe.custom_text}</p>
                     </div>
@@ -398,7 +400,7 @@ export default function Recipes({ user }: { user: User }) {
                   </Dialog>
                 </CardHeader>
                 <CardContent>
-                  {/*<p className='my-[.5rem]'>{recipe.description}</p>*/}
+                  {/*{/*<p className='my-[.5rem]'>{recipe.description}</p>*/}*/}
                   {recipe.photo && (
                     <AspectRatio ratio={4 / 3}>
                       <img
