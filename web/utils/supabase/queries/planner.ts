@@ -8,19 +8,19 @@ export async function planDay(
   day: string,
   values: z.infer<typeof DayForm>
 ) {
-  const { data: plannerData, error: plannerError } = await supabase
+  const { data, error } = await supabase
     .from("planner")
     .select(day)
     .eq("user_id", user_id)
-    .single();
+    .single<{ [key: string]: string }>();
 
-  console.log(plannerData);
+  console.log(data);
 
-  if (plannerData) {
-    const { data, error } = await supabase
+  if (data) {
+    const { data: dayData, error: dayError } = await supabase
       .from("day")
       .upsert({
-        id: plannerData.day,
+        id: data.day,
         breakfast: values.breakfast,
         lunch: values.lunch,
         dinner: values.dinner,
