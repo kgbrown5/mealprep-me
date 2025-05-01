@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,DialogClose, DialogDescription
 } from "@/components/ui/dialog"
-import { RecipeFormInput, Recipe, Ingredient, Unit } from '@/utils/supabase/models/recipes'
+import { RecipeFormInput, Recipe, Ingredient } from '@/utils/supabase/models/recipes'
 import { newRecipe, deleteRecipe } from '@/utils/supabase/queries/recipes'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -50,15 +50,9 @@ export function IngredientDropdown({
   setSelectedIngredients: React.Dispatch<React.SetStateAction<IngredientType[]>>
 }) {
     const supabase = createComponentClient();
-    type UnitType = z.infer<typeof Unit>;
-
     const [ingredients, setIngredients] = useState<IngredientType[]>([])
     const [isOpen, setIsOpen] = useState(false)
     const [inputValue, setInputValue] = useState("")
-    const [units, setUnits] = useState<UnitType[]>([]);
-
-    console.log(units)
-
 
     useEffect(() => {
         const loadIngredients = async () => {
@@ -73,16 +67,7 @@ export function IngredientDropdown({
             }
         };
         loadIngredients();
-        
-        const loadUnits = async () => {
-          const { data, error } = await supabase.from("units").select("*");
-          if (data && !error) {
-              setUnits(data.map(unit => unit.name)); // assuming 'name' is the column for unit names
-          } else {
-              console.error("Failed to fetch units", error);
-          }
-      };
-      loadUnits()
+      
     },[supabase]); // run on mount!
 
     const handleSelectIngredient = (ingredient: IngredientType) => {
