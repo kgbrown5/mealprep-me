@@ -10,6 +10,7 @@
 ![Supabase](https://img.shields.io/badge/-Supabase-05122A?style=flat&logo=supabase)
 
 *Add some screenshots or graphics here that show your app being used!*
+![Recipe page](recipe.png)
 
 Meet MealPrep Me! This website helps users in planning out their weekly meals, simplifying recipe storage, grocery planning, and nutrition goals.
 
