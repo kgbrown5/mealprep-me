@@ -17,8 +17,11 @@ Meet MealPrep Me! This website helps users in planning out their weekly meals, s
 Users can create, delete, and view recipes. Recipes include a title, a list of ingredients, and optional photos, descriptions, or links.
 ![Recipe page](recipe.png)
 
+
 ### Feature 2: Meal Planning
 Plan each day's meals ahead of time and link to relevant saved recipes!
+![Grocery List](meal-plan.png)
+
 
 ### Feature 3: Grocery List
 Users can add, remove, and check off items on their grocery lists.
