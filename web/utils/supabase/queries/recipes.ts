@@ -1,12 +1,15 @@
-import { SupabaseClient, User } from "@supabase/supabase-js";
-import { Recipe, RecipeFormInput } from "../models/recipes";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { RecipeFormInput, Recipe } from "../models/recipes";
 import { z } from "zod";
+
+type Recipe = z.infer<typeof Recipe>;
 
 export async function newRecipe(
   supabase: SupabaseClient,
   user_id: string,
   values: z.infer<typeof RecipeFormInput>
-) {
+): Promise<{ data: Recipe | null; error: Error | null }> {
+  // Allow data to be null
   console.log("Recipe Saved!");
   let photo = null;
 
@@ -19,7 +22,7 @@ export async function newRecipe(
 
     if (photoError) {
       console.error("Upload failed:", photoError.message);
-      return;
+      return { data: null, error: photoError }; // Correct return for error
     }
 
     if (photoData) {
@@ -38,18 +41,19 @@ export async function newRecipe(
       name: values.name,
       description: values.description,
       custom_text: values.custom_text,
-      ingredients: values.ingredients,
+      ingredients: values.ingredients.map((ing) => ing.name).join(", "),
       photo: photo,
     })
-    .select();
+    .select("*")
+    .single();
 
   if (error) {
-    throw new Error(`Error creating recipe: ${error.message}`);
+    console.error(`Error creating recipe: ${error.message}`);
+    return { data: null, error }; // Compatible return with function signature
   }
 
-  if (data) {
-    console.log(`Successful insert! Recipe: ${data}`);
-  }
+  console.log(`Successful insert! Recipe: ${data}`);
+  return { data, error: null }; // Return the data and no error
 }
 
 export async function deleteRecipe(
