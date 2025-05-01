@@ -137,14 +137,12 @@ export async function loadPlanner(supabase: SupabaseClient, user_id: string) {
       fullPlanner.friday,
       fullPlanner.saturday,
       fullPlanner.sunday,
-    ]
-      .filter((day): day is Day => day !== null)
-      .map((day: any) => ({
-        name: day.name,
-        breakfast: day.breakfast,
-        lunch: day.lunch,
-        dinner: day.dinner,
-      }));
+    ].map((day: any) => ({
+      name: day.name,
+      breakfast: day.breakfast,
+      lunch: day.lunch,
+      dinner: day.dinner,
+    }));
 
     return plannerDays;
   }
