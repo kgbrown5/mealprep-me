@@ -62,13 +62,13 @@ function DayCard(props: {
     defaultValues: {},
   });
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (props.day) {
       props.day.breakfast && form.setValue("breakfast", props.day.breakfast);
       props.day.lunch && form.setValue("lunch", props.day.lunch);
       props.day.dinner && form.setValue("dinner", props.day.dinner);
     }
-  }, [props.day, form]);
+  }, [props.day, form]); */
 
   const saveDay = async (values: z.infer<typeof DayForm>) => {
     await planDay(
@@ -291,7 +291,9 @@ export default function Home({ user }: { user: User }) {
 
   useEffect(() => {
     loadPlanner(supabase, user.id).then((planner) => {
-      planner && setPlanner(planner);
+      if (planner) {
+        setPlanner(planner);
+      }
     });
     loadRecipes(supabase, user.id).then((recipes) => setRecipes(recipes));
   }, [supabase, user.id]);
